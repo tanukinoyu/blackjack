@@ -1,7 +1,7 @@
 fun main(args: Array<String>) {
 /**
- * �g�����v��\�����邽�߂ɂ܂���̃��X�g���쐬
- * for�����d�˂āA�}�[�N�Ɛ����̎�ޕ��J��Ԃ�������add���s���Ă��܂�
+ * トランプを表現するためにまず空のリストを作成
+ * for文を二つ重ねて、マークと数字の種類分繰り返し処理でaddを行っています
  */
     val cards : MutableList<Card> = mutableListOf()
     for(mark in 1..4){
@@ -15,105 +15,104 @@ fun main(args: Array<String>) {
     judge(player, dealer)
 }
 /**
- * �g�����v�̃J�[�h��\�����邽�߂̃N���X
- * �}�[�N�Ɛ������i�[���Aprintln�ł̏o�͂��l�����Ċe�v���p�e�B��
- * String�^�ŐV���ȕϐ��ɑ�����Ă��܂��B
+ * トランプのカードを表現するためのクラス
+ * マークと数字を格納し、printlnでの出力を考慮して各プロパティを
+ * String型で新たな変数に代入しています。
  */
 data class Card(val mark: Int, var number: Int){
     val markString: String = when(mark){
-        1 -> "�_�C��"
-        2 -> "�X�y�[�h"
-        3 -> "�n�[�g"
-        4 -> "�N���[�o�["
-        else -> "�H"
+        1 -> "ダイヤ"
+        2 -> "スペード"
+        3 -> "ハート"
+        4 -> "クローバー"
+        else -> "？"
     }
     val numberString: String = when(number){
-        1 -> "�G�[�X"
-        11 -> "�W���b�N"
-        12 -> "�N�C�[��"
-        13 -> "�L���O"
+        1 -> "エース"
+        11 -> "ジャック"
+        12 -> "クイーン"
+        13 -> "キング"
         else -> number.toString()
     }
 }
-//�Q�[�����v���C�������ʂƂȂ��D��\������N���X
+//ゲームをプレイした結果となる手札を表現するクラス
 class Hand(val score: Int, val dealer: Boolean, val bj: Boolean, val cards: List<Card>){}
 
 /**
- * �v���C���[�ƃf�B�[���[�̎�D�����󂯎���ďo�͂��A
- * ���s�𔻒肷��֐��ł��B
+ * プレイヤーとディーラーの手札情報を受け取って出力し、
+ * 勝敗を判定する関数です。
  */
 fun judge(player: Hand, dealer: Hand){
-    println("�Q�[���J�n�ł��I")
+    println("ゲーム開始です！")
     if(player.score >= 22){
         openHand(player)
-        println("�v���C���[���o�X�g�������߁A�f�B�[���[�̏����ł��I")
+        println("プレイヤーがバストしたため、ディーラーの勝ちです！")
     } else if(player.bj){
         openHand(player)
         openHand(dealer)
         if(dealer.bj){
-            println("���҃u���b�N�W���b�N�����ł��A���������Ńf�B�[���[�̏����ł��I")
+            println("両者ブラックジャック成立です、引き分けでディーラーの勝ちです！")
         } else{
-            println("�v���C���[���u���b�N�W���b�N�����A�v���C���[�̏����ł��I")
+            println("プレイヤーがブラックジャック成立、プレイヤーの勝ちです！")
         }
     } else if(dealer.bj){
         openHand(player)
         openHand(dealer)
-        println("�f�B�[���[���u���b�N�W���b�N�����A�f�B�[���[�̏����ł��I")
+        println("ディーラーがブラックジャック成立、ディーラーの勝ちです！")
     } else{
         openHand(player)
         openHand(dealer)
         if(dealer.score >= 22){
-            println("�f�B�[���[���o�X�g�������߁A�v���C���[�̏����ł��I")
+            println("ディーラーがバストしたため、プレイヤーの勝ちです！")
         } else if(player.score > dealer.score){
-            println("�f�B�[���[�̃X�R�A���������̂ŁA�v���C���[�̏����ł��I")
+            println("ディーラーのスコアを上回ったので、プレイヤーの勝ちです！")
         } else if(player.score < dealer.score){
-            println("�f�B�[���[�̃X�R�A����������̂ŁA�f�B�[���[�̏����ł��I")
+            println("ディーラーのスコアを下回ったので、ディーラーの勝ちです！")
         } else{
-            println("���X�R�A�ɂ����������Ȃ̂ŁA�f�B�[���[�̏����ł��I�I")
+            println("同スコアにより引き分けなので、ディーラーの勝ちです！！")
         }
     }
 }
-
 /**
- * ��D���o�͂��邽�߂̊֐�
- * �󂯎����Hand�N���X�̒��̃��X�g�ɑ΂��āA
- * withIndex�ŃC���f�b�N�X���擾�������ڂ̃J�[�h����\���A
- * forEach�Ŋe�v�f�ɑ΂���println���s���Ă��܂��B
+ * 手札を出力するための関数
+ * 受け取ったHandクラスの中のリストに対して、
+ * withIndexでインデックスを取得し何枚目のカードかを表し、
+ * forEachで各要素に対してprintlnを行っています。
  */
 fun openHand(hand: Hand){
     if(hand.dealer){
-        hand.cards.withIndex().forEach{println("�f�B�[���[��${it.index + 1}���ڂ�${it.value.markString}��${it.value.numberString}�������܂���")}
-        println("�f�B�[���[�̃X�R�A��${hand.score}�ɂȂ�܂���")
+        hand.cards.withIndex().forEach{println("ディーラーは${it.index + 1}枚目に${it.value.markString}の${it.value.numberString}を引きました")}
+        println("ディーラーのスコアは${hand.score}になりました")
         println("----------------------------------------------")
     } else{
-        hand.cards.withIndex().forEach{println("�v���C���[��${it.index + 1}���ڂ�${it.value.markString}��${it.value.numberString}�������܂���")}
-        println("�v���C���[�̃X�R�A��${hand.score}�ɂȂ�܂���")
+        hand.cards.withIndex().forEach{println("プレイヤーは${it.index + 1}枚目に${it.value.markString}の${it.value.numberString}を引きました")}
+        println("プレイヤーのスコアは${hand.score}になりました")
         println("----------------------------------------------")
     }
 }
 /**
- * �v���C���[���Ƃ��ăf�B�[���[���ۂ���Boolean�Ŏ󂯎��A
- * �J�[�h�����������Q�[�����v���C�������ʂ��N���X�Ɋi�[���ĕԂ��֐��ł��B
+ * プレイヤー情報としてディーラーか否かをBooleanで受け取り、
+ * カードを引き続けゲームをプレイした結果をクラスに格納して返す関数です。
  */
 fun playGame(cards: MutableList<Card>, dealer: Boolean): Hand{
-    //�������J�[�h����D�Ƃ��Ċi�[���邽�߂ɐV���ɋ�̃��X�g���쐬
+    //引いたカードを手札として格納するために新たに空のリストを作成
     val playCards: MutableList<Card> = mutableListOf()
-    //��D�̍��v�_���i�[����ϐ�
+    //手札の合計点を格納する変数
     var score = 0
-    //�������Ă���G�[�X�̖������Ǘ����邽�߂̕ϐ�
+    //所持しているエースの枚数を管理するための変数
     var ace = 0
     
-    //�J�[�h��������D�ɉ����A�_�����v�Z����֐�
+    //カードを引き手札に加え、点数を計算する関数
     fun drawCard(){
-        //random�֐��Ńg�����v���烉���_���ŃJ�[�h�������Ashuffle���g�p�����ق����g�����v���ۂ���������
+        //random関数でトランプからランダムでカードを引く、shuffleを使用したほうがトランプっぽかったかも
         val draw = cards.random()
-        //�������J�[�h�����X�g��������A��D�Ƃ��č쐬�������X�g�Ɋi�[����
+        //引いたカードをリストから消し、手札として作成したリストに格納する
         cards.remove(draw)
         playCards.add(draw)
         /**
-         * �������J�[�h�̐�������A�G�[�X��G�D�ɑΉ������_�����o���B
-         * �G�[�X���������ۂɃG�[�X�̐���\���ϐ�ace�̒l�𑝂₵�A
-         * �܂���11�_�̃J�[�h�Ƃ��Ĉ����B
+         * 引いたカードの数字から、エースや絵札に対応した点数を出す。
+         * エースを引いた際にエースの数を表す変数aceの値を増やし、
+         * まずは11点のカードとして扱う。
          */
         val drawCardNumber: Int = if(draw.number == 1){
             ace++
@@ -124,16 +123,16 @@ fun playGame(cards: MutableList<Card>, dealer: Boolean): Hand{
             draw.number
         }
         score = score + drawCardNumber
-        //11�_�̃G�[�X�����������܂܃o�X�g�������ɂȂ����ꍇ�ɁAace�̒l�����炵�G�[�X��1�_�Ƃ��Ĉ����B
+        //11点のエースを所持したままバストしそうになった場合に、aceの値を減らしエースを1点として扱う。
         if(ace >= 1 && score >= 22){
             ace--
             score = score - 10
         } 
     }
     /**
-     * �X�R�A�����l������܂ŃJ�[�h������������B
-     * �f�B�[���[�̓��[���ɑ���Ӗ������߂�17�_�ȏ�ɂȂ�܂łƂ��A
-     * �v���C���[��11�_�̃G�[�X�������Ă���ꍇ�̂ݏ����U�߂Ă݂鎖�ɂ��܂����B
+     * スコアが一定値を上回るまでカードを引き続ける。
+     * ディーラーはルールに則る意味も込めて17点以上になるまでとし、
+     * プレイヤーは11点のエースを持っている場合のみ少し攻めてみる事にしました。
      */
     if(dealer){
         while(score < 17){
@@ -150,10 +149,10 @@ fun playGame(cards: MutableList<Card>, dealer: Boolean): Hand{
             }
         }
     }
-    //count�֐��Ń��X�g�̗v�f���A�܂�͎�D�̖����𓾂�B
+    //count関数でリストの要素数、つまりは手札の枚数を得る。
     val handCount: Int = playCards.count()
-    //�u���b�N�W���b�N���������Ă��邩�ǂ����𔻒肷��B
+    //ブラックジャックが成立しているかどうかを判定する。
     val blackJack: Boolean = handCount == 2 && score == 21
-    //��D�N���X�ɏ����i�[���߂�l�Ƃ���B
+    //手札クラスに情報を格納し戻り値とする。
     return Hand(score, dealer, blackJack, playCards)
 }
