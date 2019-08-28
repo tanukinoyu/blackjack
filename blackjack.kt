@@ -73,6 +73,7 @@ fun judge(player: Hand, dealer: Hand){
         }
     }
 }
+
 /**
  * 手札を出力するための関数
  * 受け取ったHandクラスの中のリストに対して、
