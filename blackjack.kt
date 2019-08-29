@@ -66,8 +66,8 @@ fun judge(player: Hand, dealer: Hand){
             println("ディーラーがバストしたため、プレイヤーの勝ちです！")
         } else if(player.score > dealer.score){
             println("ディーラーのスコアを上回ったので、プレイヤーの勝ちです！")
-        } else if(player.score < dealer.score){
-            println("ディーラーのスコアを下回ったので、ディーラーの勝ちです！")
+        } else if(dealer.score > player.score){
+        println("ディーラーのスコアを下回ったので、ディーラーの勝ちです！")
         } else{
             println("同スコアにより引き分けなので、ディーラーの勝ちです！！")
         }
